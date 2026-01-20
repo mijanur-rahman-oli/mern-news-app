@@ -1,0 +1,6 @@
+# Ignore environment variables
+backend/.env
+frontend/.env
+
+# Ignore dependencies
+node_modules/
