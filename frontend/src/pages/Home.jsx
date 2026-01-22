@@ -3,14 +3,12 @@ import NewsCard from '../components/NewsCard';
 import Filters from '../components/Filters';
 import { newsAPI } from '../services/api';
 import BreakingNews from '../components/BreakingNews';
-
 const Home = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filters, setFilters] = useState({ country: 'us', category: '' });
 
-  // Use useCallback to prevent unnecessary re-renders
   const fetchHeadlines = useCallback(async (customFilters) => {
     setLoading(true);
     setError('');
@@ -24,27 +22,22 @@ const Home = () => {
       setLoading(false);
     }
   }, []);
-
   useEffect(() => {
     fetchHeadlines(filters);
-  }, [fetchHeadlines]); // Runs on mount
+  }, [fetchHeadlines, filters]); 
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    fetchHeadlines(newFilters);
   };
-
   return (
     <div className="page-container">
-      {/* 1. Breaking News - Only show if we have data to avoid empty black bar */}
+
       {articles.length > 0 && <BreakingNews articles={articles.slice(0, 10)} />}
 
-      {/* 2. Filters - Pass the loading prop to disable buttons inside the filter bar */}
       <section className="filter-section">
         <Filters onFilterChange={handleFilterChange} isLoading={loading} />
       </section>
 
-      {/* 3. Error Handling */}
       {error && (
         <div className="error-box" style={{ textAlign: 'center', margin: '2rem 0' }}>
           <p>{error}</p>
@@ -52,10 +45,8 @@ const Home = () => {
         </div>
       )}
 
-      {/* 4. News Content Area */}
       <section className="news-grid">
         {loading ? (
-          // Skeleton Loading State (Professional Alternative to Spinner)
           [...Array(6)].map((_, i) => (
             <div key={i} className="news-card skeleton" style={skeletonStyles.card}>
               <div style={skeletonStyles.image}></div>

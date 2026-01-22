@@ -86,3 +86,5 @@ app.listen(PORT, () => {
   console.log('- Read tracking and Bulk fetch operations');
   console.log('--------------------------------------------');
 });
+
+module.exports = app;
