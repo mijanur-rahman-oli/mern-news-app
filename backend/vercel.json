@@ -1,19 +1,15 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
+    { "src": "server.js", "use": "@vercel/node" }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
-  ]
+    { "src": "/api/(.*)", "dest": "/server.js" }
+  ],
+  "env": {
+    "NEWS_API_KEY": "NEW_KEY_HERE",
+    "MONGODB_URI": "YOUR_MONGO_URI_HERE",
+    "JWT_SECRET": "YOUR_SECRET_HERE",
+    "NODE_ENV": "production"
+  }
 }

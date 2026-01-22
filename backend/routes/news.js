@@ -53,52 +53,58 @@ const saveArticlesToDB = async (articles, category = null, language = 'en', coun
 // @access  Public
 router.get('/headlines', async (req, res) => {
   try {
-    const { 
-      country = 'us', 
-      category, 
-      q, 
+    const {
+      country = 'us',
+      category,
+      q,
       sources,
       page = 1,
       pageSize = 20
     } = req.query;
-    
-    const params = { 
-      country,
-      page: parseInt(page),
-      pageSize: parseInt(pageSize)
+
+    const params = {
+      page: Number(page),
+      pageSize: Number(pageSize)
     };
-    
-    if (category) params.category = category;
+
+    // NewsAPI rules
+    if (sources) {
+      params.sources = sources;
+    } else {
+      params.country = country;
+      if (category && category.trim() !== '') {
+        params.category = category;
+      }
+    }
+
     if (q) params.q = q;
-    if (sources) params.sources = sources;
-    
-    // Fetch from News API
+
     const response = await newsapi.v2.topHeadlines(params);
-    
-    // Save articles to database
+
     const savedArticles = await saveArticlesToDB(
-      response.articles, 
-      category, 
-      'en', 
+      response.articles,
+      category || 'general',
+      'en',
       country
     );
-    
+
     res.json({
       success: true,
       totalResults: response.totalResults,
       articles: savedArticles,
-      page: parseInt(page),
-      pageSize: parseInt(pageSize)
+      page: Number(page),
+      pageSize: Number(pageSize)
     });
   } catch (error) {
-    console.error('Headlines error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch headlines',
-      error: error.message
+    console.error('Headlines error:', error.message);
+
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Failed to fetch headlines'
     });
   }
 });
+
 
 // @route   GET /api/news/search
 // @desc    Search articles with filters (saved to DB)
